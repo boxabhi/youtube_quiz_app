@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Quiz App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+
+
+
+    <div id="app">
+
+        <div class="container mt-5">
+
+            <div v-for="(question,index) in questions" :key="question.id" class="mt-5">
+                <p>[[index + 1]]. [[question.question]]</p>
+                <div v-for="(option , i) in question.option">
+                    <input type="radio" @change="check(index , i,question.id)" :value="option" :name="'option-'+question.id"> [[option]]
+                </div>
+                <p :id="'show_message-'+question.id"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            delimiters: ['[[', ']]'],
+            el: '#app',
+
+            data: {
+                message: 'Hello Vue!',
+                course_id: '{{course_id}}',
+                questions: []
+            },
+            methods: {
+                check(question_index,option_index,id){
+                    var question = this.questions[question_index]
+                    var element = document.getElementById(`show_message-${id}`)
+                    if((option_index + 1).toString() == question.correct){
+                        element.classList = 'text-success '
+                        element.innerHTML = "Right Answer  😁"
+                       
+                    }else{
+                        element.classList = 'text-danger'
+                        element.innerHTML = "Wrong Answer  😨"
+                    }
+                }
+            },
+            mounted() {
+                console.log(this.course_id)
+                fetch(`api/${this.course_id}`)
+                    .then(res => res.json())
+                    .then(result => {
+                        this.questions = result
+                    })
+            }
+        });
+    </script>
+</body>
+
+</html>

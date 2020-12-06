@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+<div id="app" class="mt-5 pt-5">
+    <div class="container">
+        <form @submit.prevent="handleSubmit()">
+            <div v-for="(question,index) in questions" :key="question.id" class="mt-5">
+                <p>[[index + 1]]. [[question.question]]</p>
+                <div v-for="(option , i) in question.options">
+                    <input :id="'radio-'+question.id" @change="check(index , i , question.id)" type="radio"
+                        :value="option" :name="'option-'+question.id">
+                    [[option]]
+                </div>
+                <p :id="'show_message-'+question.id"></p>
+            </div>
+
+            <button class="btn btn-danger" type="submit">Submit</button>
+        </form>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+<script>
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            course_id: '{{id}}',
+            questions: [],
+            solutions: []
+        },
+        methods: {
+            greet: function (name) {
+                console.log('Hello from ' + name + '!')
+            },
+            check(question_index, option_index, id) {
+                var question = this.questions[question_index]
+                var element = document.getElementById(`show_message-${id}`)
+
+                var radios = document.querySelectorAll(`#radio-${id}`)
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].disabled = true
+                }
+
+                var solution = {
+                    'question_id': id,
+                    'option': option_index + 1
+                }
+                this.solutions.push(solution)
+            },
+            handleSubmit() {
+        
+                fetch('/api/check_score', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                       data : JSON.stringify(this.solutions),
+                       course_id : this.course_id
+                    })
+                })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                window.location = '/view_score'
+            })
+
+        }
+    },
+
+    mounted() {
+
+        fetch(`/api/${this.course_id }`)
+            .then(res => res.json())
+            .then(result => {
+                this.questions = result
+
+            })
+
+    }
+    });
+</script>
+
+{% endblock %}

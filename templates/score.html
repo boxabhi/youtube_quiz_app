@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container mt-5">
+
+<ul class="list-group">
+    <li class="list-group-item active">Your score</li>
+    {% for s in score %}
+    <li class="list-group-item ">{{s.score}} - {{s.course.course_name}}</li>
+
+    {% endfor %}
+    {% if score %}
+    {% else %}
+    <p class="text-center mt-5">You haven't given any exam yet.</p>
+    <a class="btn btn-dark" href="/">Give Exam</a>
+    {% endif %}
+  </ul>
+  
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+    <div class="container mt-5 pt-5">
+        <p class="text-center">Select Course for MCQ</p>
+
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-lg-3">
+                <a href="/{{course.id}}" class="btn btn-primary">{{course.course_name}}</a>
+                        </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+   {% endblock %}
